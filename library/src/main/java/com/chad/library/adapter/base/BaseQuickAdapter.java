@@ -916,6 +916,32 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      */
     @Override
     public void onBindViewHolder(K holder, int position) {
+//         //Add up fetch logic, almost like load more, but simpler.
+//         autoUpFetch(position);
+//         //Do not move position, need to change before LoadMoreView binding
+//         autoLoadMore(position);
+//         int viewType = holder.getItemViewType();
+
+//         switch (viewType) {
+//             case 0:
+//                 convert(holder, getItem(position - getHeaderLayoutCount()));
+//                 break;
+//             case LOADING_VIEW:
+//                 mLoadMoreView.convert(holder);
+//                 break;
+//             case HEADER_VIEW:
+//                 break;
+//             case EMPTY_VIEW:
+//                 break;
+//             case FOOTER_VIEW:
+//                 break;
+//             default:
+//                 convert(holder, getItem(position - getHeaderLayoutCount()));
+//                 break;
+//         }
+    }
+     @Override
+    public void onBindViewHolder(K holder, int position, List<Object> payloads) {
         //Add up fetch logic, almost like load more, but simpler.
         autoUpFetch(position);
         //Do not move position, need to change before LoadMoreView binding
@@ -924,7 +950,11 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
 
         switch (viewType) {
             case 0:
-                convert(holder, getItem(position - getHeaderLayoutCount()));
+                if (payloads.isEmpty()) {
+                    convert(holder, getItem(position - getHeaderLayoutCount()));
+                } else {
+                    convert(holder, getItem(position - getHeaderLayoutCount()), payloads);
+                }
                 break;
             case LOADING_VIEW:
                 mLoadMoreView.convert(holder);
@@ -936,7 +966,11 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
             case FOOTER_VIEW:
                 break;
             default:
-                convert(holder, getItem(position - getHeaderLayoutCount()));
+                if (payloads.isEmpty()) {
+                    convert(holder, getItem(position - getHeaderLayoutCount()));
+                } else {
+                    convert(holder, getItem(position - getHeaderLayoutCount()), payloads);
+                }
                 break;
         }
     }
@@ -1573,7 +1607,9 @@ public abstract class BaseQuickAdapter<T, K extends BaseViewHolder> extends Recy
      * @param item   The item that needs to be displayed.
      */
     protected abstract void convert(K helper, T item);
+    protected void convert(K helper, T item, List payLoads) {
 
+    }
     /**
      * get the specific view by position,e.g. getViewByPosition(2, R.id.textView)
      * <p>
